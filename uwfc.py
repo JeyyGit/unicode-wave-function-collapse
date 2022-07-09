@@ -8,9 +8,6 @@ import tqdm
 def print_board(board):
     print('\n'.join(''.join(el.tile or '*' for el in row) for row in board), end='\n\n')
 
-def print_entropies(board):
-    print('\n'.join(''.join(str(el.entropy) for el in row) for row in board), end='\n\n')
-
 def find_lowest_entropies(board):
     entropies = np.vectorize(lambda t: t.entropy)(board)
     indices = np.where(entropies == entropies.min())
@@ -20,12 +17,12 @@ def update_entropies(board, tiles):
     w, h = board.shape
     for i in range(w):
         for j in range(h):
-            tile: Tile = board[i, j]
+            tile = board[i, j]
             for poss in tile.possibilities.values():
                 poss.clear()
             if not tile.tile:
                 if i > 0:
-                    up: Tile = board[i-1, j]
+                    up = board[i-1, j]
                     if up.tile:
                         for tl in tiles:
                             if tl.sides.up == up.sides.down:
@@ -33,7 +30,7 @@ def update_entropies(board, tiles):
                     else:
                         tile.possibilities['up'].update(tiles)
                 try:
-                    right: Tile = board[i, j+1]
+                    right = board[i, j+1]
                     if right.tile:
                         for tl in tiles:
                             if tl.sides.right == right.sides.left:
@@ -43,7 +40,7 @@ def update_entropies(board, tiles):
                 except:
                     ...
                 try:
-                    down: Tile = board[i+1, j]
+                    down = board[i+1, j]
                     if down.tile:
                         for tl in tiles:
                             if tl.sides.down == down.sides.up:
@@ -53,7 +50,7 @@ def update_entropies(board, tiles):
                 except:
                     ...
                 if j > 0:
-                    left: Tile = board[i, j-1]
+                    left = board[i, j-1]
                     if left.tile:
                         for tl in tiles:
                             if tl.sides.left == left.sides.right:
@@ -65,10 +62,10 @@ def update_entropies(board, tiles):
             
             tile.update_entropy()
 
-Sides = namedtuple('Side', ('up', 'right', 'down', 'left'))
+Sides = namedtuple('Sides', ('up', 'right', 'down', 'left'))
 
 class Tile:
-    def __init__(self, tile=None, sides: Sides=None):
+    def __init__(self, tile = None, sides = None):
         self.tile = tile
         self.sides = sides
         self.entropy = 5
